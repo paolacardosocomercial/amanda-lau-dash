@@ -365,10 +365,13 @@ function parseVendasCSV(csv) {
 function parseMetasCSV(csv) {
   const linhas = csv.trim().split('\n').slice(1);
   const obj = {};
+  const sep = csv.includes(';') ? ';' : ',';
   linhas.forEach(l => {
-    const cols = l.split(',').map(c => c.replace(/^"|"$/g,'').trim());
-    const chave = (cols[0]||'').toLowerCase();
-    const valor = parseFloat((cols[1]||'0').replace('R$','').replace('.','').replace(',','.'))||0;
+    const cols = l.split(sep).map(c => c.replace(/^"|"$/g,'').trim());
+    const chave = (cols[0]||'').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const rawVal = (cols[1]||'0').replace(/[R$\s]/g,'').trim();
+    const valor = parseFloat(rawVal.replace(/\./g,'').replace(',','.')) || parseFloat(rawVal) || 0;
     if(chave.includes('renov'))  obj.renov = valor;
     if(chave.includes('nova'))   obj.novas = valor;
     if(chave.includes('indiv'))  obj.ind   = valor;
