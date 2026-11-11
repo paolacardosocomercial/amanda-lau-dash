@@ -216,7 +216,7 @@
     <div class="meta-card">
       <div class="meta-card-label">Meta de Vendas Novas</div>
       <div class="meta-card-value" style="color:var(--green)" id="d-meta-novas-v">R$ 0</div>
-      <div style="font-size:11px;color:var(--gray);margin-top:4px">Clara Maia + Anna Luiza</div>
+      <div style="font-size:11px;color:var(--gray);margin-top:4px">Clara Maia + Amanda Limoeiro</div>
     </div>
   </div>
 
@@ -291,8 +291,10 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VENDEDORAS = ["Clara Maia","Anna Luiza","Maria Clara","Amanda Lau"];
-const VENDEDORAS_NOVAS = ["Clara Maia","Anna Luiza"];
+// Time atual: quem aparece sempre no quadro de Desempenho Individual
+const VENDEDORAS_ATIVAS = ["Amanda Lau","Clara Maia","Amanda Limoeiro"];
+// Quem tem meta de vendas novas. Anna Luiza continua aqui só para preservar o histórico dos meses em que ela vendeu
+const VENDEDORAS_NOVAS = ["Clara Maia","Amanda Limoeiro","Anna Luiza"];
 const PRECOS = { "Trimestral":945, "Semestral":1680, "Anual":3150 };
 const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
@@ -466,7 +468,9 @@ function renderDash() {
   document.getElementById('d-pkg-anu-v').textContent =fmt(anu.reduce((s,v)=>s+v.valor,0));
 
   const indbody=document.getElementById('d-ind-body');
-  const rows=VENDEDORAS.map(nome=>{
+  // Time atual + qualquer pessoa que tenha venda no mês selecionado (mantém o histórico de quem saiu)
+  const nomes=[...new Set([...VENDEDORAS_ATIVAS,...vendas.map(v=>v.vendedora).filter(Boolean)])];
+  const rows=nomes.map(nome=>{
     const isAmanda=nome==='Amanda Lau', isNovas=VENDEDORAS_NOVAS.includes(nome);
     const tNovas=vendas.filter(v=>v.vendedora===nome&&v.tipo==='Nova').reduce((s,v)=>s+v.valor,0);
     const tRenov=vendas.filter(v=>v.vendedora===nome&&v.tipo==='Renovação').reduce((s,v)=>s+v.valor,0);
